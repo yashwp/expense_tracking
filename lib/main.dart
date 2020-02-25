@@ -14,7 +14,8 @@ class MyApp extends StatelessWidget {
       title: 'Expense Tracker',
       theme: ThemeData(
         primarySwatch: Colors.green,
-        fontFamily: 'Quicksand'
+        fontFamily: 'Quicksand',
+        errorColor: Colors.red
       ),
       home: MyHomePage(),
     );
@@ -40,11 +41,11 @@ class _MyHomePageState extends State<MyHomePage> {
     }).toList();
   }
 
-  void _addExpense(String title, double amount) {
+  void _addExpense(String title, double amount, DateTime date) {
     final newExpense = Transaction(
         title: title,
         amount: amount,
-        date: DateTime.now(),
+        date: date,
         id: DateTime.now().toString());
 
     setState(() {
@@ -59,6 +60,12 @@ class _MyHomePageState extends State<MyHomePage> {
         return AddTransaction(_addExpense);
       },
     );
+  }
+
+  void _deleteTransaction(String id) {
+    setState(() {
+      _transactions.removeWhere((item) => item.id == id);
+    });
   }
 
   @override
@@ -82,7 +89,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           children: <Widget>[
             Chart(_recentTransactions),
-            TransactionList(_transactions),
+            TransactionList(_transactions, _deleteTransaction),
           ],
         ),
       ),

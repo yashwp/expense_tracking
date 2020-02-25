@@ -5,7 +5,7 @@ import 'package:intl/intl.dart';
 import '../models/transaction.dart';
 
 class Chart extends StatelessWidget {
-  List<Transaction> recentExpenses;
+  final List<Transaction> recentExpenses;
 
   Chart(this.recentExpenses);
 
@@ -28,7 +28,7 @@ class Chart extends StatelessWidget {
         'day': DateFormat.E().format(weekDay).substring(0, 1),
         'amount': totalSum
       };
-    });
+    }).reversed.toList();
   }
 
   double get totalSpending {
@@ -50,7 +50,7 @@ class Chart extends StatelessWidget {
             children: groupedExpenses.map((data) {
               return ChartBar(
                 data['day'],
-                (data['amount'] == 0.0) ? 0.0 : (data['amount'] as double) / totalSpending,
+                (totalSpending == 0.0) ? 0.0 : (data['amount'] as double) / totalSpending,
                 data['amount']
               );
             }).toList(),

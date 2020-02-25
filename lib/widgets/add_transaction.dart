@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class AddTransaction extends StatefulWidget {
   final Function newExpense;
@@ -11,19 +12,37 @@ class AddTransaction extends StatefulWidget {
 
 class _AddTransactionState extends State<AddTransaction> {
   final titleController = TextEditingController();
-
   final amountController = TextEditingController();
+  final today = DateTime.now();
+  DateTime _selectedDate;
 
-  void submitData() {
+  void _submitData() {
     final title = titleController.text;
     final amount = double.parse(amountController.text);
-    
-    if (title.isEmpty || amount <=0 ) {
+
+    if (title.isEmpty || amount <= 0 || _selectedDate == null) {
       return;
     }
-    widget.newExpense(title,amount);
+    widget.newExpense(title, amount, _selectedDate);
 
     Navigator.of(context).pop();
+  }
+
+  void _openDatePicker() {
+    showDatePicker(
+      context: context,
+      initialDate: today,
+      firstDate: DateTime(2019),
+      lastDate: today,
+    ).then((date) {
+      if (date == null) {
+        return;
+      }
+
+      setState(() {
+        _selectedDate = date;
+      });
+    });
   }
 
   @override
@@ -47,12 +66,33 @@ class _AddTransactionState extends State<AddTransaction> {
               ),
               controller: amountController,
               keyboardType: TextInputType.number,
-              onSubmitted: (_) => submitData(),
+              onSubmitted: (_) => _submitData(),
             ),
-            FlatButton(
-              child: Text('Add Expense'),
-              textColor: Theme.of(context).primaryColor,
-              onPressed: submitData,
+            Container(
+              margin: EdgeInsets.only(top: 8),
+              child: Row(
+                children: <Widget>[
+                  Text(_selectedDate == null
+                      ? 'No date choosen'
+                      : DateFormat.yMMMd().format(_selectedDate)),
+                  FlatButton(
+                    onPressed: _openDatePicker,
+                    textColor: Theme.of(context).primaryColor,
+                    child: Text(
+                      'Choose date',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            RaisedButton(
+              child: Text(
+                'Add Expense',
+              ),
+              textColor: Colors.white,
+              color: Theme.of(context).primaryColor,
+              onPressed: _submitData,
             ),
           ],
         ),
