@@ -22,6 +22,8 @@ class _AddTransactionState extends State<AddTransaction> {
       return;
     }
     widget.newExpense(title,amount);
+
+    Navigator.of(context).pop();
   }
 
   @override
@@ -49,7 +51,7 @@ class _AddTransactionState extends State<AddTransaction> {
             ),
             FlatButton(
               child: Text('Add Expense'),
-              textColor: Colors.deepOrangeAccent,
+              textColor: Theme.of(context).primaryColor,
               onPressed: submitData,
             ),
           ],
